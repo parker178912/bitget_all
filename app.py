@@ -42,7 +42,7 @@ def webhook():
                 if tracking['data'][i]['holdSide'] == 'long':
                     trackingNo = tracking['data'][i]['trackingNo']
                     closeApi.close_track_order(symbol=data['ticker']+'_UMCBL',trackingNo=trackingNo)
-                    orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_short', orderType='market', timeInForceValue='normal', presetStopLossPrice=data['strategy']['order_price']*1.01)
+                    orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_short', orderType='market', timeInForceValue='normal', presetStopLossPrice=data['strategy']['alert_message'])
                     break
         else:
             orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_short', orderType='market', timeInForceValue='normal')
@@ -54,7 +54,7 @@ def webhook():
                 if tracking['data'][i]['holdSide'] == 'short':
                     trackingNo = tracking['data'][i]['trackingNo']
                     closeApi.close_track_order(symbol=data['ticker']+'_UMCBL',trackingNo=trackingNo)
-                    orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_long', orderType='market', timeInForceValue='normal', presetStopLossPrice=data['strategy']['order_price']*0.99)
+                    orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_long', orderType='market', timeInForceValue='normal', presetStopLossPrice=data['strategy']['alert_message'])
                     break
         else:
             orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_long', orderType='market', timeInForceValue='normal')
