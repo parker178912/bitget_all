@@ -33,8 +33,8 @@ def webhook():
         data['ticker'] = 'ETCUSDT' 
     if data['ticker'] == 'SOLUSDT.P':
         data['ticker'] = 'SOLUSDT' 
-    long_stoploss = str(round(0.99*data['strategy']['order_price'], 2))
-    short_stoploss = str(round(1.01*data['strategy']['order_price'], 2))
+    long_stoploss = round(0.99*data['strategy']['order_price'], 2)
+    short_stoploss = round(1.01*data['strategy']['order_price'], 2)
     if data['strategy']['order_id'] == 'Short Entry':
         if data['strategy']['order_contracts']*data['strategy']['order_price']>1400:
             tracking = closeApi.current_track(symbol=data['ticker']+'_UMCBL', productType='umcbl', pageSize=20, pageNo=1)
