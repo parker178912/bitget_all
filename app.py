@@ -27,14 +27,20 @@ def webhook():
     data['strategy']['position_size'] = abs(data['strategy']['position_size'])
     if data['ticker'] == 'BTCUSDT.P':
         data['ticker'] = 'BTCUSDT'
+        long_stoploss = round(0.99*data['strategy']['order_price'], 1)
+        short_stoploss = round(1.01*data['strategy']['order_price'], 1)
     if data['ticker'] == 'ETHUSDT.P':
-        data['ticker'] = 'ETHUSDT'   
+        data['ticker'] = 'ETHUSDT'  
+        long_stoploss = round(0.99*data['strategy']['order_price'], 2)
+        short_stoploss = round(1.01*data['strategy']['order_price'], 2)
     if data['ticker'] == 'ETCUSDT.P':
-        data['ticker'] = 'ETCUSDT' 
+        data['ticker'] = 'ETCUSDT'
+        long_stoploss = round(0.99*data['strategy']['order_price'], 3)
+        short_stoploss = round(1.01*data['strategy']['order_price'], 3)
     if data['ticker'] == 'SOLUSDT.P':
-        data['ticker'] = 'SOLUSDT' 
-    long_stoploss = round(0.99*data['strategy']['order_price'], 2)
-    short_stoploss = round(1.01*data['strategy']['order_price'], 2)
+        data['ticker'] = 'SOLUSDT'
+        long_stoploss = round(0.99*data['strategy']['order_price'], 4)
+        short_stoploss = round(1.01*data['strategy']['order_price'], 4)
     if data['strategy']['order_id'] == 'Short Entry':
         if data['strategy']['order_contracts']*data['strategy']['order_price']>1400:
             tracking = closeApi.current_track(symbol=data['ticker']+'_UMCBL', productType='umcbl', pageSize=20, pageNo=1)
