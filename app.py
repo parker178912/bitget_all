@@ -33,7 +33,8 @@ def webhook():
         data['ticker'] = 'ETCUSDT' 
     if data['ticker'] == 'SOLUSDT.P':
         data['ticker'] = 'SOLUSDT' 
-
+    long_stoploss = round(0.99*data['strategy']['order_price'], 2)
+    short_stoploss = round(1.01*data['strategy']['order_price'], 2)
     if data['strategy']['order_id'] == 'Short Entry':
         if data['strategy']['order_contracts']*data['strategy']['order_price']>1400:
             tracking = closeApi.current_track(symbol=data['ticker']+'_UMCBL', productType='umcbl', pageSize=20, pageNo=1)
@@ -42,7 +43,7 @@ def webhook():
                 if tracking['data'][i]['holdSide'] == 'long':
                     trackingNo = tracking['data'][i]['trackingNo']
                     closeApi.close_track_order(symbol=data['ticker']+'_UMCBL',trackingNo=trackingNo)
-                    orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_short', orderType='market', timeInForceValue='normal', presetStopLossPrice=data['strategy']['alert_message'])
+                    orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_short', orderType='market', timeInForceValue='normal', presetStopLossPrice=short_stoploss)
                     break
         else:
             orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_short', orderType='market', timeInForceValue='normal')
@@ -54,7 +55,7 @@ def webhook():
                 if tracking['data'][i]['holdSide'] == 'short':
                     trackingNo = tracking['data'][i]['trackingNo']
                     closeApi.close_track_order(symbol=data['ticker']+'_UMCBL',trackingNo=trackingNo)
-                    orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_long', orderType='market', timeInForceValue='normal', presetStopLossPrice=data['strategy']['alert_message'])
+                    orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_long', orderType='market', timeInForceValue='normal', presetStopLossPrice=long_stoploss)
                     break
         else:
             orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_long', orderType='market', timeInForceValue='normal')
