@@ -27,62 +27,57 @@ def webhook():
     data['strategy']['position_size'] = abs(data['strategy']['position_size'])
     if data['ticker'] == 'BTCUSDT.P':
         data['ticker'] = 'BTCUSDT'
-        long_stoploss = round(0.99*data['strategy']['order_price'], 1)
-        short_stoploss = round(1.01*data['strategy']['order_price'], 1)
     if data['ticker'] == 'ETHUSDT.P':
         data['ticker'] = 'ETHUSDT'  
-        long_stoploss = round(0.99*data['strategy']['order_price'], 2)
-        short_stoploss = round(1.01*data['strategy']['order_price'], 2)
     if data['ticker'] == 'ETCUSDT.P':
         data['ticker'] = 'ETCUSDT'
-        long_stoploss = round(0.99*data['strategy']['order_price'], 3)
-        short_stoploss = round(1.01*data['strategy']['order_price'], 3)
     if data['ticker'] == 'SOLUSDT.P':
         data['ticker'] = 'SOLUSDT'
-        long_stoploss = round(0.99*data['strategy']['order_price'], 4)
-        short_stoploss = round(1.01*data['strategy']['order_price'], 4)
-    if data['strategy']['order_id'] == 'Short Entry':
-        if data['strategy']['order_contracts']*data['strategy']['order_price']>1400:
+    if data['strategy']['order_id'] == 'Short Entry': ##papu
+        if data['strategy']['order_contracts']*data['strategy']['order_price']>300: ##papu反手
             tracking = closeApi.current_track(symbol=data['ticker']+'_UMCBL', productType='umcbl', pageSize=20, pageNo=1)
             datalen = len(tracking['data'])
             for i in range(datalen):
                 if tracking['data'][i]['holdSide'] == 'long':
                     trackingNo = tracking['data'][i]['trackingNo']
                     closeApi.close_track_order(symbol=data['ticker']+'_UMCBL',trackingNo=trackingNo)
-                    orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_short', orderType='market', timeInForceValue='normal', presetStopLossPrice=short_stoploss)
+                    orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_short', orderType='market', timeInForceValue='normal')
                     break
         else:
             orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_short', orderType='market', timeInForceValue='normal')
     if data['strategy']['order_id'] == 'Long Entry':
-        if data['strategy']['order_contracts']*data['strategy']['order_price']>1400:
+        if data['strategy']['order_contracts']*data['strategy']['order_price']>300:
             tracking = closeApi.current_track(symbol=data['ticker']+'_UMCBL', productType='umcbl', pageSize=20, pageNo=1)
             datalen = len(tracking['data'])
             for i in range(datalen):
                 if tracking['data'][i]['holdSide'] == 'short':
                     trackingNo = tracking['data'][i]['trackingNo']
                     closeApi.close_track_order(symbol=data['ticker']+'_UMCBL',trackingNo=trackingNo)
-                    orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_long', orderType='market', timeInForceValue='normal', presetStopLossPrice=long_stoploss)
+                    orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_long', orderType='market', timeInForceValue='normal')
                     break
         else:
             orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side='open_long', orderType='market', timeInForceValue='normal')
-    if data['strategy']['order_id'] == 'Long Exit':
-        data['strategy']['order_id'] = 'close_long'
-    if data['strategy']['order_id'] == 'Short Exit':
-        data['strategy']['order_id'] = 'close_short'    
-    if data['strategy']['order_id'] == 'Close entry(s) order Long Entry':
-        data['strategy']['order_id'] = 'close_long'
-    if data['strategy']['order_id'] == 'Close entry(s) order Short Entry':
-        data['strategy']['order_id'] = 'close_short' 
 
     if data['strategy']['order_id'] == 'Close entry(s) order open_long':
         data['strategy']['order_id'] = 'close_long'
     if data['strategy']['order_id'] == 'Close entry(s) order open_short':
         data['strategy']['order_id'] = 'close_short' 
-
-    if (data['strategy']['order_id'] == 'open_long' or data['strategy']['order_id'] == 'open_short'):
+    const = 0
+    if (data['strategy']['order_id'] == 'open_long' or data['strategy']['order_id'] == 'open_short'): ##突破
         orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side=data['strategy']['order_id'], orderType='market', timeInForceValue='normal')    
-
-    if (data['strategy']['order_id'] == 'close_long'):
+        time.sleep(1)
+        orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side=data['strategy']['order_id'], orderType='market', timeInForceValue='normal')    
+    elif (data['strategy']['order_id'] == 'close_long'): ##突破
+        tracking = closeApi.current_track(symbol=data['ticker']+'_UMCBL', productType='umcbl', pageSize=20, pageNo=1)
+        datalen = len(tracking['data'])
+        for i in range(datalen):
+            if tracking['data'][i]['holdSide'] == 'long':
+                trackingNo = tracking['data'][i]['trackingNo']
+                closeApi.close_track_order(symbol=data['ticker']+'_UMCBL',trackingNo=trackingNo)
+                const+=1
+                if const == 2:
+                    break
+    elif (data['strategy']['order_id'] == 'close_long1' or data['strategy']['order_id'] == 'close_long2' or data['strategy']['order_id'] == 'Long Exit' or data['strategy']['order_id'] == 'Close entry(s) order Long Entry'):
         tracking = closeApi.current_track(symbol=data['ticker']+'_UMCBL', productType='umcbl', pageSize=20, pageNo=1)
         datalen = len(tracking['data'])
         for i in range(datalen):
@@ -90,8 +85,17 @@ def webhook():
                 trackingNo = tracking['data'][i]['trackingNo']
                 closeApi.close_track_order(symbol=data['ticker']+'_UMCBL',trackingNo=trackingNo)
                 break
-
-    if (data['strategy']['order_id'] == 'close_short'):
+    elif (data['strategy']['order_id'] == 'close_short'):
+        tracking = closeApi.current_track(symbol=data['ticker']+'_UMCBL', productType='umcbl', pageSize=20, pageNo=1)
+        datalen = len(tracking['data'])
+        for i in range(datalen):
+            if tracking['data'][i]['holdSide'] == 'short':
+                trackingNo = tracking['data'][i]['trackingNo']
+                closeApi.close_track_order(symbol=data['ticker']+'_UMCBL',trackingNo=trackingNo)
+                const+=1
+                if const == 2:
+                    break
+    elif (data['strategy']['order_id'] == 'close_short1' or data['strategy']['order_id'] == 'close_short2' or data['strategy']['order_id'] == 'Short Exit' or data['strategy']['order_id'] == 'Close entry(s) order Short Entry'):
         tracking = closeApi.current_track(symbol=data['ticker']+'_UMCBL', productType='umcbl', pageSize=20, pageNo=1)
         datalen = len(tracking['data'])
         for i in range(datalen):
@@ -99,7 +103,6 @@ def webhook():
                 trackingNo = tracking['data'][i]['trackingNo']
                 closeApi.close_track_order(symbol=data['ticker']+'_UMCBL',trackingNo=trackingNo)
                 break
-
     return{
         'message':'success'
     }
