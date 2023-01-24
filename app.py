@@ -60,8 +60,12 @@ def webhook():
 
     if data['strategy']['order_id'] == 'Close entry(s) order open_long':
         data['strategy']['order_id'] = 'close_long'
+    if data['strategy']['order_id'] == 'Close position order' and data['strategy']['order_action'] == 'sell':
+        data['strategy']['order_id'] = 'close_long'
     if data['strategy']['order_id'] == 'Close entry(s) order open_short':
         data['strategy']['order_id'] = 'close_short' 
+    if data['strategy']['order_id'] == 'Close position order' and data['strategy']['order_action'] == 'buy':
+        data['strategy']['order_id'] = 'close_short'
     const = 0
     if (data['strategy']['order_id'] == 'open_long' or data['strategy']['order_id'] == 'open_short'): ##突破
         orderApi.place_order(symbol=data['ticker']+'_UMCBL', marginCoin='USDT', size=data['strategy']['position_size'],side=data['strategy']['order_id'], orderType='market', timeInForceValue='normal')    
