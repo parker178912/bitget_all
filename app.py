@@ -13,8 +13,8 @@ app = Flask(__name__)
 def home():
     return "Hello"
 
-api_key = "bg_c93b9964acf78d8aefafc8a9fba3ae47"
-secret_key = "5999639f45fe079af6931bc7568b0da3b04397da4eed3be2f06fe9de36fb7d5b"
+api_key = "bg_bdbe978bde7f282269043c1cd5f7329a"
+secret_key = "7b8068afe6edcf082908bd144cf8d82f3d45d0f7d1587538fa9b361b459d3e52"
 passphrase = "superball"  # Password
 
 marketApi = market.MarketApi(api_key, secret_key, passphrase, use_server_time=False, first=False)
@@ -55,26 +55,17 @@ def webhook():
         symbol = "BTCUSDT_UMCBL"
     elif data['ticker'] == 'ETHUSDT.P' or data['ticker'] == 'ETHUSDT':
         symbol = "ETHUSDT_UMCBL"
-    size = data['strategy']['order_contracts']
+    size = data['strategy']['market_position_size']
     market_position = data['strategy']['market_position']
     pre_market_position = data['strategy']['prev_market_position']
     action = data['strategy']['order_action']
-    orderid = data['strategy']['order_id']
     if(market_position == "flat" and action == "buy"): #close short
         close(symbol, "short")
-        if orderid != "close_short2":
-            close(symbol, "short")
     elif(market_position == "flat" and action == "sell"): #close long
         close(symbol, "long")
-        if orderid != "close_long2":        
-            close(symbol, "long")
     elif(market_position == "long" and action == "buy" and pre_market_position == "flat"): #long entry
         open(symbol, size, "open_long")
-        time.sleep(1.5)
-        open(symbol, size, "open_long")
     elif(market_position == "short" and action == "sell" and pre_market_position == "flat"): #short entry
-        open(symbol, size, "open_short")
-        time.sleep(1.5)
         open(symbol, size, "open_short")
     elif(market_position == "long" and action == "sell" and pre_market_position == "long"): #close long1
         close(symbol, "long")
@@ -82,15 +73,9 @@ def webhook():
         close(symbol, "short")
     elif(market_position == "long" and action == "buy" and pre_market_position == "short"): #close short and open long
         close(symbol, "short")
-        close(symbol, "short")
-        open(symbol, size, "open_long")
-        time.sleep(1.5)
         open(symbol, size, "open_long")
     elif(market_position == "short" and action == "sell" and pre_market_position == "long"): #close long and open short
         close(symbol, "long")
-        close(symbol, "long")
-        open(symbol, size, "open_short")   
-        time.sleep(1.5)
         open(symbol, size, "open_short")     
     return{
         "code":"success",
