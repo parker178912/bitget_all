@@ -24,7 +24,6 @@ traceApi = trace.TraceApi(api_key, secret_key, passphrase, use_server_time=False
 
 def open(symbol, size, side):
     try:
-        time.sleep(2.5)
         print(f"sending order - {side} {size} {symbol}")
         result = orderApi.place_order(symbol, marginCoin='USDT', size=size, side=side, orderType='market', timeInForceValue='normal')
         print(result)
@@ -52,7 +51,7 @@ def close(symbol, closeside):
 @app.route('/webhook', methods=['POST'])
 def webhook():
     data = json.loads(request.data)
-    symbol = "BTCUSDT_UMCBL"
+    symbol = "ETHUSDT_UMCBL"
     size = data['strategy']['market_position_size']
     market_position = data['strategy']['market_position']
     pre_market_position = data['strategy']['prev_market_position']
