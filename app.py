@@ -24,6 +24,7 @@ traceApi = trace.TraceApi(api_key, secret_key, passphrase, use_server_time=False
 
 def open(symbol, size, side):
     try:
+        time.sleep(8)
         print(f"sending order - {side} {size} {symbol}")
         result = orderApi.place_order(symbol, marginCoin='USDT', size=size, side=side, orderType='market', timeInForceValue='normal')
         print(result)
