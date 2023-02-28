@@ -52,7 +52,7 @@ def close(symbol, closeside):
 def webhook():
     data = json.loads(request.data)
     symbol = "ETHUSDT_UMCBL"
-    size = data['strategy']['market_position_size']
+    size = 0.1
     market_position = data['strategy']['market_position']
     pre_market_position = data['strategy']['prev_market_position']
     action = data['strategy']['order_action']
