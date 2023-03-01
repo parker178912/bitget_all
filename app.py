@@ -61,12 +61,10 @@ def webhook():
     elif(market_position == "flat" and action == "sell"): #close long
         close(symbol, "long")
     elif(market_position == "long" and action == "buy" and pre_market_position == "flat"): #long entry
-        time.sleep(8.5)
         open(symbol, size, "open_long")
         time.sleep(2)
         open(symbol, size, "open_long")
     elif(market_position == "short" and action == "sell" and pre_market_position == "flat"): #short entry
-        time.sleep(8.5)
         open(symbol, size, "open_short")
         time.sleep(2)        
         open(symbol, size, "open_short")
@@ -77,14 +75,12 @@ def webhook():
     elif(market_position == "long" and action == "buy" and pre_market_position == "short"): #close short and open long
         close(symbol, "short")
         close(symbol, "short")
-        time.sleep(8.5)
         open(symbol, size, "open_long")
         time.sleep(2)
         open(symbol, size, "open_long")
     elif(market_position == "short" and action == "sell" and pre_market_position == "long"): #close long and open short
         close(symbol, "long")
         close(symbol, "long")
-        time.sleep(8.5)
         open(symbol, size, "open_short")
         time.sleep(2)
         open(symbol, size, "open_short")     
