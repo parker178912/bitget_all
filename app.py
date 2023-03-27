@@ -56,8 +56,10 @@ def webhook():
     market_position = data['strategy']['market_position']
     pre_market_position = data['strategy']['prev_market_position']
     action = data['strategy']['order_action']
-    stoplossprice = ''
-    stoplossprice = str(int(data['strategy']['stopLossPrice']*100)/100)
+    try:
+        stoplossprice = str(int(data['strategy']['stopLossPrice']*100)/100)
+    except:
+        stoplossprice = None
     if(market_position == "flat" and action == "buy"): #close short
         close(symbol, "short")
     elif(market_position == "flat" and action == "sell"): #close long
