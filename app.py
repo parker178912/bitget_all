@@ -22,10 +22,10 @@ orderApi = order.OrderApi(api_key, secret_key, passphrase, use_server_time=False
 accountApi = accounts.AccountApi(api_key, secret_key, passphrase, use_server_time=False, first=False)
 traceApi = trace.TraceApi(api_key, secret_key, passphrase, use_server_time=False, first=False)
 
-def open(symbol, size, side, stoplossprice):
+def open(symbol, size, side, stoplossprice, takeprofit):
     try:
         print(f"sending order - {side} {size} {symbol}")
-        result = orderApi.place_order(symbol, marginCoin='USDT', size=size, side=side, orderType='market', timeInForceValue='normal', presetStopLossPrice=stoplossprice)
+        result = orderApi.place_order(symbol, marginCoin='USDT', size=size, side=side, orderType='market', timeInForceValue='normal', presetStopLossPrice=stoplossprice, presetTakeProfitPrice = takeprofit)
         print(result)
     except Exception as e:
         print("an exception occured - {}".format(e))
@@ -58,36 +58,24 @@ def webhook():
     action = data['strategy']['order_action']
     try:
         stoplossprice = str(int(data['strategy']['stopLossPrice']*100)/100)
+        takeprofit = str(float(data['strategy']['takeprofit']))
     except:
-        stopLossPrice = ''
+        stoplossprice = None
+        takeprofit = None
     if(market_position == "flat" and action == "buy"): #close short
         close(symbol, "short")
     elif(market_position == "flat" and action == "sell"): #close long
         close(symbol, "long")
     elif(market_position == "long" and action == "buy" and pre_market_position == "flat"): #long entry
-        open(symbol, size, "open_long", stoplossprice)
-        time.sleep(2)
-        open(symbol, size, "open_long", stoplossprice)
+        open(symbol, size, "open_long", stoplossprice, takeprofit)
     elif(market_position == "short" and action == "sell" and pre_market_position == "flat"): #short entry
-        open(symbol, size, "open_short", stoplossprice)
-        time.sleep(2)        
-        open(symbol, size, "open_short", stoplossprice)
-    elif(market_position == "long" and action == "sell" and pre_market_position == "long"): #close long1
-        close(symbol, "long")
-    elif(market_position == "short" and action == "buy" and pre_market_position == "short"): #close short1
-        close(symbol, "short")
+        open(symbol, size, "open_short", stoplossprice, takeprofit)
     elif(market_position == "long" and action == "buy" and pre_market_position == "short"): #close short and open long
         close(symbol, "short")
-        close(symbol, "short")
-        open(symbol, size, "open_long", stoplossprice)
-        time.sleep(2)
-        open(symbol, size, "open_long", stoplossprice)
+        open(symbol, size, "open_long", stoplossprice, takeprofit)
     elif(market_position == "short" and action == "sell" and pre_market_position == "long"): #close long and open short
         close(symbol, "long")
-        close(symbol, "long")
-        open(symbol, size, "open_short", stoplossprice)
-        time.sleep(2)
-        open(symbol, size, "open_short", stoplossprice)     
+        open(symbol, size, "open_short", stoplossprice, takeprofit)     
     return{
         "code":"success",
         "message":"0117 dsv "
