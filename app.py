@@ -58,7 +58,7 @@ def webhook():
     action = data['strategy']['order_action']
     try:
         stoplossprice = str(int(data['strategy']['stopLossPrice']*100)/100)
-        takeprofit = str(float(data['strategy']['takeprofit']))
+        takeprofit = str(int(data['strategy']['stopLossPrice']*100)/100)
     except:
         stoplossprice = None
         takeprofit = None
